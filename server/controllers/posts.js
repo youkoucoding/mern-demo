@@ -10,6 +10,18 @@ export const getPosts = async (req, res) => {
   }
 };
 
-export const createPost = (req, res) => {
-  res.send('post is created!');
+export const createPost = async (req, res) => {
+  const post = req.body;
+
+  // mongoose.model のリターンです。
+  const newPost = new PostMessage(post);
+
+  try {
+    await newPost.save();
+    // status 201:リクエストが成功してリソースの作成が完了したことを表します
+    res.status(201).json(newPost);
+  } catch (error) {
+    //409:リクエストが現在のサーバーの状態と競合したこと
+    res.status(409).json({ message: error.message });
+  }
 };
