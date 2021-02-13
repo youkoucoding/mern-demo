@@ -1,21 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Paper, Button, Typography } from '@material-ui/core';
 import FileBase from 'react-file-base64';
 import useStyles from './styles';
-import { useDispatch } from 'react-redux';
-import { createPost } from '../../actions/posts';
+import { useDispatch, useSelector } from 'react-redux';
+import { createPost, updatePost } from '../../actions/posts';
 
-const Form = () => {
+const Form = ({ currentId, setCurrentId }) => {
   const [postData, setPostData] = useState({
     creator: '', title: '', message: '', tags: '', selectedFile: ''
   });
+  const post = useSelector((state) => currentId ? state.posts.find((p) => p._id === currentId) : null);
   const classes = useStyles();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (post) setPostData(post);
+  }, [post]);
 
   const handleSubmit = (e) => {
     //make browser not reload
     e.preventDefault();
-    dispatch(createPost(postData));
+
+    if (currentId) {
+      dispatch(updatePost(currentId, postData));
+    } else {
+      dispatch(createPost(postData));
+    }
+
   };
 
   const clear = () => { };
@@ -27,38 +38,38 @@ const Form = () => {
         <TextField
           name="creator"
           variant="outlined"
-          label="creator"
+          label="Creator"
           fullWidth
           value={postData.creator}
           // mem.dev
-          onClick={(e) => setPostData({ ...postData, creator: e.target.value })}
+          onChange={(e) => setPostData({ ...postData, creator: e.target.value })}
         />
         <TextField
           name="title"
           variant="outlined"
-          label="title"
+          label="Title"
           fullWidth
           value={postData.title}
           // mem.dev
-          onClick={(e) => setPostData({ ...postData, title: e.target.value })}
+          onChange={(e) => setPostData({ ...postData, title: e.target.value })}
         />
         <TextField
           name="message"
           variant="outlined"
-          label="message"
+          label="Message"
           fullWidth
           value={postData.message}
           // mem.dev
-          onClick={(e) => setPostData({ ...postData, message: e.target.value })}
+          onChange={(e) => setPostData({ ...postData, message: e.target.value })}
         />
         <TextField
           name="tags"
           variant="outlined"
-          label="tags"
+          label="Tags"
           fullWidth
           value={postData.tags}
           // mem.dev
-          onClick={(e) => setPostData({ ...postData, tags: e.target.value })}
+          onChange={(e) => setPostData({ ...postData, tags: e.target.value })}
         />
         <div className={classes.fileInput}>
           <FileBase

@@ -4,6 +4,8 @@ export default (posts = [], action) => {  //(state=[], action)(previousState, ac
       return action.payload;
     case 'CREATE':
       return [...posts, action.payload];  // ... is stretch all the post,then add new ones
+    case 'UPDATE':
+      return posts.map((post) => post._id === action.payload._id ? action.payload : post);
     default:
       return posts;
   }
